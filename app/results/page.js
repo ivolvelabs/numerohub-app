@@ -1,12 +1,12 @@
-// app/results/page.js
 "use client";
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useNumerology } from "@/context/NumerologyContext"; // Changed import path
-import { generateInsight } from "@/lib/numerologyUtils"; // Changed import path
-import { numerologyInsightsData } from "@/data/numerologyInsights"; // Changed import path
-import NumberCard from "@/components/NumberCard"; // Changed import path
+import { useNumerology } from "@/context/NumerologyContext";
+import { generateInsight } from "@/lib/numerologyUtils";
+import { numerologyInsightsData } from "@/data/numerologyInsights";
+import NumberCard from "@/components/NumberCard";
+import { motion } from "motion/react";
 
 export default function ResultsPage() {
   const router = useRouter();
@@ -49,31 +49,42 @@ export default function ResultsPage() {
 
   if (!userData) {
     return (
-      <div className="flex-grow flex items-center justify-center p-4 text-gray-600">
+      <div className="flex items-center justify-center h-screen text-white">
         Loading insights or redirecting...
       </div>
     );
   }
 
   return (
-    <div className="flex-grow flex items-center justify-center p-4">
-      <div className="text-center bg-white p-8 rounded-xl shadow-lg max-w-4xl w-full border border-gray-200">
-        <h2 className="text-3xl font-bold text-numerohub-primary mb-6">
-          Your Numerology Blueprint Unveiled! ✨
+    <div className="relative flex flex-col h-fit min-h-screen w-full overflow-hidden p-[20px] pb-24">
+      <img
+        src="/images/report-illustration.png"
+        alt="Report Background"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-numerohub-primary/30" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="relative z-10 m-auto p-8 max-w-6xl w-full bg-white/20 rounded-2xl border backdrop-blur-sm border-white/30 shadow-2xl"
+      >
+        <h2 className="text-3xl font-bold text-numerohub-bg text-center mb-6">
+          Your Numerology Blueprint ✨
         </h2>
-        <p className="text-lg text-gray-700 mb-4">
+        <p className="text-white/90 text-center mb-10">
           Hello,{" "}
-          <span className="font-semibold text-numerohub-accent">
+          <span className="font-semibold text-numerohub-text">
             {userData.name}
-          </span>
-          ! Here are your core and deeper numerology numbers, and their
-          insights:
+          </span>{" "}
+          — here are your core & deeper numbers:
         </p>
 
-        <h3 className="text-xl font-bold text-numerohub-primary mt-8 mb-4">
+        <h3 className="text-xl font-bold text-numerohub-bg mb-4">
           Core Numbers:
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <NumberCard
             title="Birth Number"
             number={userData.birthNumber}
@@ -89,42 +100,42 @@ export default function ResultsPage() {
             number={userData.compoundNumber}
             insight={
               insights.compound
-                ? `Meaning: ${insights.compound.meaning}. Summary: ${insights.compound.summary}. Advice: ${insights.compound.advice}.`
+                ? `Meaning: ${insights.compound.meaning}\nSummary: ${insights.compound.summary}\nAdvice: ${insights.compound.advice}`
                 : "N/A"
             }
           />
         </div>
 
-        <h3 className="text-xl font-bold text-numerohub-primary mt-8 mb-4">
+        <h3 className="text-xl font-bold text-numerohub-bg mb-4">
           Deeper Numbers:
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <NumberCard
             title="Destiny Number"
             number={userData.destinyNumber}
             insight={insights.destiny}
-            isDeeper={true}
+            isDeeper
           />
           <NumberCard
             title="Soul Number"
             number={userData.soulNumber}
             insight={insights.soul}
-            isDeeper={true}
+            isDeeper
           />
           <NumberCard
             title="Personality Number"
             number={userData.personalityNumber}
             insight={insights.personality}
-            isDeeper={true}
+            isDeeper
           />
           <NumberCard
             title="Name Number"
             number={userData.nameNumber}
             insight={insights.name}
-            isDeeper={true}
+            isDeeper
           />
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

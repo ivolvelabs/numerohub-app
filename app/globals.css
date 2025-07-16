@@ -3,31 +3,61 @@
 /* This is the single import for Tailwind CSS v4.1 */
 @import "tailwindcss";
 
-/* The @theme directive is where you define your custom design tokens (colors, fonts, etc.) in v4.1 */
 @theme {
   /* Custom Color Palette */
-  --color-numerohub-primary: #4F46E5; /* A deep indigo for primary elements */
-  --color-numerohub-secondary: #818CF8; /* A lighter indigo for secondary elements/accents */
-  --color-numerohub-accent: #EC4899;   /* A vibrant pink for call-to-action elements */
-  --color-numerohub-bg: #F9FAFB;       /* A very light gray for the overall background */
-  --color-numerohub-text: #1F2937;     /* A dark gray for main text content */
+  --color-numerohub-primary: #4F46E5; 
+  --color-numerohub-secondary: #818CF8; 
+  --color-numerohub-accent: #EC4899;   
+  --color-numerohub-bg: #F9FAFB;       
+  --color-numerohub-text: #1F2937;     
 
   /* Custom Font Family */
   --font-sans: "Inter", system-ui, sans-serif; /* Sets Inter as the default sans-serif font */
 
-  /* You can also define other theme properties here like spacing, borderRadius, etc. */
-  /* Example:
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --radius-xl: 0.75rem;
-  */
+ 
 }
 
-/* Apply global styles using the custom CSS variables defined above */
-/* This ensures the base background and text color of your app */
 body {
   background-color: var(--color-numerohub-bg);
   color: var(--color-numerohub-text);
 }
 
-/* Add any other global CSS you need outside of Tailwind's utility system */
+@keyframes glowAndShimmer {
+  0% {
+    background-position: 0% 50%;
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    background-position: 100% 50%;
+    filter: brightness(1.4) saturate(1.5);
+  }
+  100% {
+    background-position: 0% 50%;
+    filter: brightness(1) saturate(1);
+  }
+}
+
+.glow-shimmer-button {
+  background: linear-gradient(
+    135deg,
+    var(--color-numerohub-accent),
+    #f472b6,
+    var(--color-numerohub-accent),
+    #f472b6
+  );
+  background-size: 300% 300%;
+  animation: glowAndShimmer 3s ease-in-out infinite;
+  color: white;
+  font-weight: bold;
+  border-radius: 9999px; /* full-rounded */
+  padding: 0.75rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
+  transition: transform 0.2s ease-in-out;
+}
+.glow-shimmer-button:hover {
+  transform: scale(1.05);
+}
+.glow-shimmer-button:active {
+  transform: scale(0.95);
+}

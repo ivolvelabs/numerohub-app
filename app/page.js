@@ -3,54 +3,68 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { calculateUniversalDayNumber } from "@/lib/numerologyUtils"; // Changed import path
-import { numerologyInsightsData } from "@/data/numerologyInsights"; // Changed import path
+import { calculateUniversalDayNumber } from "@/lib/numerologyUtils";
+import { numerologyInsightsData } from "@/data/numerologyInsights";
+import { motion } from "motion/react";
 
 export default function Home() {
   const router = useRouter();
   const [universalDayInsight, setUniversalDayInsight] = useState("");
 
   useEffect(() => {
-    const universalNum = calculateUniversalDayNumber();
-    const insight =
-      numerologyInsightsData.universalDayInsights.find(
-        (u) => u.number === universalNum
-      )?.insight || "No universal insight found for today.";
-    setUniversalDayInsight(insight);
+    const num = calculateUniversalDayNumber();
+    const found = numerologyInsightsData.universalDayInsights.find(
+      (u) => u.number === num
+    );
+    setUniversalDayInsight(
+      found?.insight || "No universal insight found for today."
+    );
   }, []);
 
-  const handleStartOnboarding = () => {
-    router.push("/onboarding");
-  };
+  const start = () => router.push("/onboarding");
 
   return (
-    <div className="flex-grow flex items-center justify-center p-4">
-      <div className="text-center bg-white p-8 rounded-xl shadow-lg max-w-lg w-full border border-gray-200">
-        <h1 className="text-4xl font-bold text-numerohub-primary mb-4">
+    <div className="relative flex flex-col h-screen w-full overflow-hidden p-[20px]">
+      {/* Background */}
+      <img
+        src="/images/splash-illustration.png"
+        alt="Mystical splash"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-numerohub-primary/30" />
+
+      {/* Glassmorphic Card */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative z-10 m-auto p-8 max-w-md w-full bg-white/20 rounded-2xl border backdrop-blur-sm border-white/30 shadow-2xl text-center"
+      >
+        <h1 className="text-4xl font-bold text-numerohub-primary drop-shadow-md mb-4">
           Welcome to Numerohub! 🔮
         </h1>
-        <p className="text-lg text-gray-700 mb-6">
-          Your personalized numerology platform, delivering daily, weekly, and
-          life-based insights.
+        <p className="text-lg text-numerohub-text/90 mb-6">
+          Your personalized numerology platform delivering daily, weekly, and
+          life‑based insights.
         </p>
-        <p className="text-md text-gray-500 mb-4">
-          Discover your core numbers and unlock the secrets of your destiny.
-        </p>
-        <div className="bg-numerohub-secondary/10 p-4 rounded-lg shadow-sm mb-6">
-          <h3 className="text-xl font-semibold text-numerohub-primary mb-2">
-            Today's Universal Insight:
+        <div className="bg-white/30 p-4 rounded-xl mb-6">
+          <h3 className="text-xl font-semibold text-numerohub-accent mb-2">
+            Today’s Universal Insight:
           </h3>
-          <p className="text-gray-800 text-base">{universalDayInsight}</p>
+          <p className="text-numerohub-text/90">{universalDayInsight}</p>
         </div>
-        <div className="mt-8 space-y-4">
-          <button
-            onClick={handleStartOnboarding}
-            className="w-full bg-numerohub-accent hover:bg-pink-600 text-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out shadow-lg transform hover:scale-105"
-          >
+        <motion.button
+          onClick={start}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="relative overflow-hidden w-full py-3 px-6 rounded-full font-bold text-white
+             bg-numerohub-accent glow-shimmer-button"
+        >
+          <span className="relative z-10">
             Get Started (Calculate My Numbers)
-          </button>
-        </div>
-      </div>
+          </span>
+        </motion.button>
+      </motion.div>
     </div>
   );
 }
