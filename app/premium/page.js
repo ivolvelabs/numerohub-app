@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 
 import { useUser } from "@/context/UserContext";
 import { setUserPremium } from "@/lib/setPremium";
+import { useRouter } from "next/navigation";
 
 const plans = [
   {
@@ -27,11 +28,13 @@ const plans = [
 
 export default function PremiumPage() {
   const { user } = useUser();
+  const router = useRouter();
 
   const handlePremium = async (plan) => {
     if (user) {
       await setUserPremium(user.uid);
       alert(`You have successfully purchased the ${plan.title}!`);
+      router.push("/insights");
     } else {
       alert("Please log in to purchase a premium plan.");
     }
@@ -69,7 +72,10 @@ export default function PremiumPage() {
               </h3>
               <p className="text-2xl font-bold mb-1">{plan.price}</p>
               <p className="text-sm mb-4">{plan.duration}</p>
-              <button className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold py-2 px-4 rounded-full hover:scale-105 transition-all" onClick={() => handlePremium(plan)}>
+              <button
+                className="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white font-semibold py-2 px-4 rounded-full hover:scale-105 transition-all"
+                onClick={() => handlePremium(plan)}
+              >
                 Purchase
               </button>
             </div>
