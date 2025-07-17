@@ -11,6 +11,7 @@ import { motion } from "motion/react";
 export default function ResultsPage() {
   const router = useRouter();
   const { userData } = useNumerology();
+  const [loading, setLoading] = useState(true);
 
   const [insights, setInsights] = useState({
     birth: "",
@@ -23,36 +24,43 @@ export default function ResultsPage() {
   });
 
   useEffect(() => {
-    if (!userData) {
-      router.push("/onboarding");
-      return;
+    if (userData) {
+      setInsights({
+        birth: generateInsight(userData.birthNumber, "birthNumberInsights"),
+        lifePath: generateInsight(
+          userData.lifePathNumber,
+          "lifePathNumberInsights"
+        ),
+        compound: numerologyInsightsData.compoundNumberInsights.find(
+          (c) => c.number === userData.compoundNumber
+        ),
+        destiny: generateInsight(userData.destinyNumber, "destinyNumberInsights"),
+        soul: generateInsight(userData.soulNumber, "soulNumberInsights"),
+        personality: generateInsight(
+          userData.personalityNumber,
+          "personalityNumberInsights"
+        ),
+        name: generateInsight(userData.nameNumber, "nameNumberInsights"),
+      });
+      setLoading(false);
+    } else {
+      const storedUserData = localStorage.getItem("numerohubUserData");
+      if (!storedUserData) {
+        router.push("/onboarding");
+      }
     }
-
-    setInsights({
-      birth: generateInsight(userData.birthNumber, "birthNumberInsights"),
-      lifePath: generateInsight(
-        userData.lifePathNumber,
-        "lifePathNumberInsights"
-      ),
-      compound: numerologyInsightsData.compoundNumberInsights.find(
-        (c) => c.number === userData.compoundNumber
-      ),
-      destiny: generateInsight(userData.destinyNumber, "destinyNumberInsights"),
-      soul: generateInsight(userData.soulNumber, "soulNumberInsights"),
-      personality: generateInsight(
-        userData.personalityNumber,
-        "personalityNumberInsights"
-      ),
-      name: generateInsight(userData.nameNumber, "nameNumberInsights"),
-    });
   }, [userData, router]);
 
-  if (!userData) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen text-white">
-        Loading insights or redirecting...
+        Loading insights...
       </div>
     );
+  }
+
+  if (!userData) {
+    return null; // or a redirect, but the effect handles it
   }
 
   return (

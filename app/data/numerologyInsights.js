@@ -1936,6 +1936,11 @@ export const numerologyInsightsData = {
       "building a strong network",
     ],
     positive_trait_4: ["disciplined", "reliable", "practical", "methodical"],
+    positive_trait_5: ["adventurous", "adaptable", "versatile", "magnetic"],
+    positive_trait_6: ["nurturing", "responsible", "compassionate", "harmonious"],
+    positive_trait_7: ["analytical", "intuitive", "wise", "introspective"],
+    positive_trait_8: ["ambitious", "powerful", "authoritative", "organized"],
+    positive_trait_9: ["humanitarian", "compassionate", "wise", "idealistic"],
     practical_task: [
       "organizing your space",
       "planning a budget",

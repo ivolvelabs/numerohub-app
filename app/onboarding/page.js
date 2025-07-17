@@ -34,6 +34,7 @@ export default function OnboardingPage() {
     const dateObj = new Date(dob);
     if (isNaN(dateObj.getTime())) {
       setError("Please enter a valid Date of Birth.");
+      console.log("Invalid date");
       return;
     }
 
@@ -57,6 +58,7 @@ export default function OnboardingPage() {
       nameNumber,
     });
 
+    console.log("Form submitted");
     router.push("/results");
   };
 

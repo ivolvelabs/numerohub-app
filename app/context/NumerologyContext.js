@@ -1,7 +1,7 @@
 // context/NumerologyContext.js
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const NumerologyContext = createContext(null);
 
@@ -16,9 +16,19 @@ export const useNumerology = () => {
 export function NumerologyProvider({ children }) {
   const [userData, setUserData] = useState(null);
 
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("numerohubUserData");
+    if (storedUserData) {
+      setUserData(JSON.parse(storedUserData));
+    }
+  }, []);
+
   const value = {
     userData,
-    setUserData,
+    setUserData: (data) => {
+      setUserData(data);
+      localStorage.setItem("numerohubUserData", JSON.stringify(data));
+    },
   };
 
   return (
