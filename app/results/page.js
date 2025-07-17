@@ -1,27 +1,23 @@
+// app/results/page.js
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import { useNumerology } from "@/context/NumerologyContext";
+import { useUser } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
+import LoginModal from "@/components/LoginModal";
+import NumberCard from "@/components/NumberCard";
+
+import { motion } from "motion/react";
 import { generateInsight } from "@/lib/numerologyUtils";
 import { numerologyInsightsData } from "@/data/numerologyInsights";
-import NumberCard from "@/components/NumberCard";
-import { motion } from "motion/react";
 
 export default function ResultsPage() {
-  const router = useRouter();
   const { userData } = useNumerology();
-  const [loading, setLoading] = useState(true);
-
-  const [insights, setInsights] = useState({
-    birth: "",
-    lifePath: "",
-    compound: "",
-    destiny: "",
-    soul: "",
-    personality: "",
-    name: "",
-  });
+  const { user, loading: userLoading } = useUser();
+  const router = useRouter();
+  const [showLogin, setShowLogin] = useState(false);
+  const [insights, setInsights] = useState({});
 
   useEffect(() => {
     if (userData) {
@@ -34,7 +30,10 @@ export default function ResultsPage() {
         compound: numerologyInsightsData.compoundNumberInsights.find(
           (c) => c.number === userData.compoundNumber
         ),
-        destiny: generateInsight(userData.destinyNumber, "destinyNumberInsights"),
+        destiny: generateInsight(
+          userData.destinyNumber,
+          "destinyNumberInsights"
+        ),
         soul: generateInsight(userData.soulNumber, "soulNumberInsights"),
         personality: generateInsight(
           userData.personalityNumber,
@@ -42,25 +41,20 @@ export default function ResultsPage() {
         ),
         name: generateInsight(userData.nameNumber, "nameNumberInsights"),
       });
-      setLoading(false);
-    } else {
-      const storedUserData = localStorage.getItem("numerohubUserData");
-      if (!storedUserData) {
-        router.push("/onboarding");
-      }
     }
-  }, [userData, router]);
+  }, [userData]);
 
-  if (loading) {
+  const handleSeeInsights = () => {
+    if (!user) setShowLogin(true);
+    else router.push("/insights");
+  };
+
+  if (userLoading) {
     return (
       <div className="flex items-center justify-center h-screen text-white">
-        Loading insights...
+        Loading...
       </div>
     );
-  }
-
-  if (!userData) {
-    return null; // or a redirect, but the effect handles it
   }
 
   return (
@@ -86,13 +80,11 @@ export default function ResultsPage() {
           <span className="font-semibold text-numerohub-text">
             {userData.name}
           </span>{" "}
-          — here are your core & deeper numbers:
+          — here are your core numbers:
         </p>
 
-        <h3 className="text-xl font-bold text-numerohub-bg mb-4">
-          Core Numbers:
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10"> */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
           <NumberCard
             title="Birth Number"
             number={userData.birthNumber}
@@ -108,42 +100,66 @@ export default function ResultsPage() {
             number={userData.compoundNumber}
             insight={
               insights.compound
-                ? `Meaning: ${insights.compound.meaning}\nSummary: ${insights.compound.summary}\nAdvice: ${insights.compound.advice}`
-                : "N/A"
+                ? `Meaning: ${insights.compound.meaning}\nSummary: ${insights.compound.summary}`
+                : "Insight not found."
             }
           />
         </div>
 
-        <h3 className="text-xl font-bold text-numerohub-bg mb-4">
-          Deeper Numbers:
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <NumberCard
-            title="Destiny Number"
-            number={userData.destinyNumber}
-            insight={insights.destiny}
-            isDeeper
-          />
-          <NumberCard
-            title="Soul Number"
-            number={userData.soulNumber}
-            insight={insights.soul}
-            isDeeper
-          />
-          <NumberCard
-            title="Personality Number"
-            number={userData.personalityNumber}
-            insight={insights.personality}
-            isDeeper
-          />
-          <NumberCard
-            title="Name Number"
-            number={userData.nameNumber}
-            insight={insights.name}
-            isDeeper
-          />
-        </div>
+        {!user && (
+          <div className="text-center mt-4">
+            <button
+              onClick={() => setShowLogin(true)}
+              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 px-8 rounded-full shadow-lg glow-shimmer-button"
+            >
+              Unlock Full Report
+            </button>
+          </div>
+        )}
+
+        {user && (
+          <>
+            <h3 className="text-xl font-bold text-numerohub-bg mb-4">
+              Deeper Numbers:
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+              <NumberCard
+                title="Destiny Number"
+                number={userData.destinyNumber}
+                insight={insights.destiny}
+              />
+              <NumberCard
+                title="Soul Number"
+                number={userData.soulNumber}
+                insight={insights.soul}
+              />
+              <NumberCard
+                title="Personality Number"
+                number={userData.personalityNumber}
+                insight={insights.personality}
+              />
+              <NumberCard
+                title="Name Number"
+                number={userData.nameNumber}
+                insight={insights.name}
+              />
+            </div>
+
+            <div className="text-center">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleSeeInsights}
+                className="bg-gradient-to-r from-pink-400 to-pink-500 text-white font-bold py-3 px-8 rounded-full shadow-lg glow-shimmer-button"
+              >
+                See Daily Life Insights
+              </motion.button>
+            </div>
+          </>
+        )}
       </motion.div>
+
+      {showLogin && <LoginModal onSuccess={() => setShowLogin(false)} />}
     </div>
   );
 }

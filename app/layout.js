@@ -2,6 +2,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { NumerologyProvider } from "@/context/NumerologyContext";
+import { UserProvider } from "@/context/UserContext";
+import UserBadge from "./components/UserBadge";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +19,11 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.className} antialiased min-h-screen flex flex-col bg-numerohub-bg text-numerohub-text`}
       >
-        <NumerologyProvider>{children}</NumerologyProvider>
+        <UserProvider>
+          <UserBadge />
+            <NumerologyProvider>{children}</NumerologyProvider>
+          {/* </UserBadge> */}
+        </UserProvider>
       </body>
     </html>
   );
